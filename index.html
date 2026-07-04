@@ -316,6 +316,50 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
+let options = ["$10", "Try Again", "$50", "Bonus", "$20", "Lose"];
+const originalOptions = [...options]; // we keep a backup
+const colors = ["#ffcc00", "#ff0066", "#00ccff", "#66ff66", "#ff66ff", "#ff9900"];
+const wheel = document.getElementById("wheel");
+let deg = 0;
+
+// Build wheel
+function buildWheel() {
+  wheel.innerHTML = "";
+  options.forEach((txt, i) => {
+    const slice = document.createElement("div");
+    slice.className = "slice";
+    slice.style.background = colors[i % colors.length];
+    slice.style.transform = `rotate(${i * (360/options.length)}deg)`;
+    slice.innerText = txt;
+    wheel.appendChild(slice);
+  });
+}
+buildWheel();
+
+function spin() {
+  if(options.length === 0) {
+    document.getElementById("result").innerText = "All options used! Resetting...";
+    options = [...originalOptions]; // reset when all are used
+    buildWheel();
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * options.length);
+  const winner = options[randomIndex];
+  
+  const random = Math.floor(Math.random() * 360) + 1800;
+  deg += random;
+  wheel.style.transform = `rotate(${deg}deg)`;
+  
+  setTimeout(() => {
+    document.getElementById("result").innerText = "You got: " + winner;
+    
+    // REMOVE the picked option so it can't repeat
+    options.splice(randomIndex, 1);
+    buildWheel(); // rebuild wheel without that option
+  }, 4000);
+}
+</script>
 
 </body>
 </html>
